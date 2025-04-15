@@ -86,7 +86,7 @@ class Tetris:
         self.rows = rows
         self.cols = cols
         self.score = 0
-        self.level = 0
+        self.level = 1
         self.grid = [[0 for j in range(cols)] for i in range(rows)]
         self.next = None
         self.end = False
@@ -106,13 +106,33 @@ class Tetris:
             self.next = Shape(5,0)
         self.figure = self.next
         self.next = Shape(5,0)
+    
+    # COLLISION ~ Check for collision
+    def collision(self) -> bool:
+        for i in range(4):
+            for j in range(4):
+                if (i*4 + j) in self.figure.image():
+                    block_row = self.figure.y + i
+                    block_col = self.figure.x + j
+                    if (block_row >= self.rows or block_col >= self.cols or block_col < 0 or self.grid[block_row][block_col] > 0):
+                        return True
+        return False
+    
+    # Remove Row
 
-    # move ~ Move the shape
-    # rotate ~ Rotate the shape
-    # drop ~ Drop the shape
-    # check_collision ~ Check for collision with walls and other shapes
-    # clear_lines ~ Clear completed lines
-    # game_over ~ Check if game is over
+    # Move Down
+    def move_down(self):
+        self.figure.y += 1
+        if self.collision():
+            self.figure.y -= 1
+
+
+    # Move Left
+
+    # Move Right
+
+    # Rotate
+
 
 
 
@@ -120,6 +140,8 @@ class Tetris:
 def main():
     run = True
     tetris = Tetris(ROWS, COLS)
+    counter = 0
+    move = True
     while run: 
         SCREEN.fill(BG_COLOR)
 
@@ -128,20 +150,33 @@ def main():
                 run = False
                 sys.exit()
 
+        # Allows block to fall at constant rate
+        counter += 1
+        if counter >= 10000:
+            counter = 0
+
+        if move:
+            if counter % (FPS // (tetris.level*2)) == 0:
+                if not tetris.end:
+                    tetris.move_down()
+                    
+
+
         tetris.make_grid()
 
         # Show Shape on Game Screen
-        for i in range(ROWS):
-            for j in range(COLS):
-                if (i *4 + j) in tetris.figure.image():
-                    shape = ASSETS[tetris.figure.color]
-                    x = CELL * (tetris.figure.x + j)
-                    y = CELL * (tetris.figure.y + i)
-                    SCREEN.blit(shape, (x, y))
-                    pygame.draw.rect(SCREEN, WHITE, (x, y, CELL, CELL), 1)
-            
-        pygame.display.update()
-        clock.tick(FPS)
+        if tetris.figure:
+            for i in range(4):
+                for j in range(4):
+                    if (i *4 + j) in tetris.figure.image():
+                        shape = ASSETS[tetris.figure.color]
+                        x = CELL * (tetris.figure.x + j)
+                        y = CELL * (tetris.figure.y + i)
+                        SCREEN.blit(shape, (x, y))
+                        pygame.draw.rect(SCREEN, WHITE, (x, y, CELL, CELL), 1)
+                
+            pygame.display.update()
+            clock.tick(FPS)
 
 if __name__ == "__main__":
     main()
