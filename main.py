@@ -47,7 +47,7 @@ font_small = pygame.font.SysFont("verdana", 15)
 
 
 # Shape Class
-class Shape:
+class Tetris:
     VERSION ={
         'I': [[1, 5, 9, 13],[4, 5, 6, 7]],
         'Z': [[4, 5, 9, 10],[2, 6, 5, 9]],
@@ -81,8 +81,23 @@ class Shape:
 
 # Game Class
     # Constructor
+    def __init__(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.score = 0
+        self.level = 0
+        self.grid = [[0 for j in range(cols)] for i in range(rows)]
+        self.next = None
+        self.end = False
 
     # make grid ~ Create the grid
+    def make_grid(self):
+        for i in range(self.rows+1):
+            pygame.draw.line(SCREEN, GRID, (0, CELL*i), (WIDTH, CELL*i))
+        for j in range(self.cols+1):
+            pygame.draw.line(SCREEN, GRID, (CELL*j, 0), (CELL*j, HEIGHT-120))
+
+
     # make shape ~ Create a new shape
     # move ~ Move the shape
     # rotate ~ Rotate the shape
@@ -94,6 +109,7 @@ class Shape:
 # Main Game Loop
 def main():
     run = True
+    tetris = Tetris(ROWS, COLS)
     while run: 
         SCREEN.fill(BG_COLOR)
 
@@ -101,6 +117,8 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 sys.exit()
+
+        tetris.make_grid()
             
         pygame.display.update()
         clock.tick(FPS)
