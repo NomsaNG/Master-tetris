@@ -47,7 +47,7 @@ font_small = pygame.font.SysFont("verdana", 15)
 
 
 # Shape Class
-class Tetris:
+class Shape:
     VERSION ={
         'I': [[1, 5, 9, 13],[4, 5, 6, 7]],
         'Z': [[4, 5, 9, 10],[2, 6, 5, 9]],
@@ -61,9 +61,9 @@ class Tetris:
     SHAPES  = ['I', 'Z', 'S', 'L', 'J', 'T', 'O']
 
     # Constructor
-    def __init__(self):
-        self.x = 0
-        self.y = 0
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
         self.type = random.choice(self.SHAPES)
         self.shape = self.VERSION[self.type]
         self.color = random.randint(1, 4)
@@ -80,6 +80,7 @@ class Tetris:
 
 
 # Game Class
+class Tetris:
     # Constructor
     def __init__(self, rows, cols):
         self.rows = rows
@@ -89,6 +90,7 @@ class Tetris:
         self.grid = [[0 for j in range(cols)] for i in range(rows)]
         self.next = None
         self.end = False
+        self.new_shape()
 
     # make grid ~ Create the grid
     def make_grid(self):
@@ -99,12 +101,20 @@ class Tetris:
 
 
     # make shape ~ Create a new shape
+    def new_shape(self):
+        if not self.next:
+            self.next = Shape(5,0)
+        self.figure = self.next
+        self.next = Shape(5,0)
+
     # move ~ Move the shape
     # rotate ~ Rotate the shape
     # drop ~ Drop the shape
     # check_collision ~ Check for collision with walls and other shapes
     # clear_lines ~ Clear completed lines
     # game_over ~ Check if game is over
+
+
 
 # Main Game Loop
 def main():
@@ -119,6 +129,16 @@ def main():
                 sys.exit()
 
         tetris.make_grid()
+
+        # Show Shape on Game Screen
+        for i in range(ROWS):
+            for j in range(COLS):
+                if (i *4 + j) in tetris.figure.image():
+                    shape = ASSETS[tetris.figure.color]
+                    x = CELL * (tetris.figure.x + j)
+                    y = CELL * (tetris.figure.y + i)
+                    SCREEN.blit(shape, (x, y))
+                    pygame.draw.rect(SCREEN, WHITE, (x, y, CELL, CELL), 1)
             
         pygame.display.update()
         clock.tick(FPS)
