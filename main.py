@@ -119,6 +119,25 @@ class Tetris:
         return False
     
     # Remove Row
+    def remove_row(self):
+        rerun = False
+
+        for y in range(self.rows-1, 0, -1):
+            completed = True
+
+            for x in range(0, self.cols):
+                if self.grid[y][x] == 0:
+                    completed = False
+                    
+            if completed:
+                del self.grid[y]
+                self.grid.insert(0, [0 for i in range(self.cols)])
+                self.score += 1
+                if self.score % 10 == 0:
+                    self.level += 1
+                rerun = True
+        if rerun:
+            self.remove_row()
 
     # Freeze
     def freeze(self):
@@ -126,7 +145,8 @@ class Tetris:
             for j in range(4):
                 if (i*4 + j) in self.figure.image():
                     self.grid[i+self.figure.y][j+self.figure.x] = self.figure.color
-        
+       
+        self.remove_row()
         self.new_shape()
         if self.collision():
             self.end = True
