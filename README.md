@@ -6,7 +6,7 @@ A simple, visually appealing Tetris clone built using Python and PyGame. This ve
 
 ## 📸 Preview
 
-![Tetris Screenshot](assets/preview.png) <!-- Add your own screenshot here -->
+![Tetris Screenshot](Assets/preview.png) <!-- Add your own screenshot here -->
 
 ---
 
@@ -53,6 +53,17 @@ A simple, visually appealing Tetris clone built using Python and PyGame. This ve
 
 
 ## 🎮 Controls
+
+| Key            | Action         |
+|----------------|----------------|
+| ⬅️ Left Arrow   | Move Left      |
+| ➡️ Right Arrow  | Move Right     |
+| ⬇️ Down Arrow   | Soft Drop      |
+| ⬆️ Up Arrow     | Rotate Block   |
+| Spacebar       | Hard Drop      |
+| R              | Restart Game   |
+| Q / Esc        | Quit Game      |
+
 
 ## 📁 Project Structure
     ```bash 
