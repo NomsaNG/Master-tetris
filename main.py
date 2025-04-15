@@ -15,7 +15,7 @@ ROWS = (HEIGHT - 120) // CELL
 COLS = WIDTH // CELL
 
 # Game Settings ~ screen, clock, title
-SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT),  pygame.NOFRAME)
 clock = pygame.time.Clock()
 pygame.display.set_caption("Tetris")
 
@@ -128,10 +128,32 @@ class Tetris:
 
 
     # Move Left
+    def move_left(self):
+        self.figure.x -= 1
+        if self.collision():
+            self.figure.x += 1
 
     # Move Right
+    def move_right(self):
+        self.figure.x += 1
+        if self.collision():
+            self.figure.x -= 1
+
+    # freefall
+    def free_fall(self):
+        while not self.collision():
+            self.figure.y += 1
+        self.figure.y -= 1
 
     # Rotate
+    def rotate(self):
+        orientation = self.figure.orientation
+        self.figure.rotate()
+        if self.collision():
+            self.figure.orientation = orientation
+            
+
+
 
 
 
@@ -142,6 +164,7 @@ def main():
     tetris = Tetris(ROWS, COLS)
     counter = 0
     move = True
+    space_pressed = False
     while run: 
         SCREEN.fill(BG_COLOR)
 
@@ -149,16 +172,37 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 sys.exit()
+             # Event Loop
+
+            keys = pygame.key.get_pressed()
+            if not tetris.end:
+                if keys[pygame.K_LEFT]:
+                    tetris.move_left()
+                elif keys[pygame.K_RIGHT]:
+                    tetris.move_right()
+                elif keys[pygame.K_DOWN]:
+                    tetris.move_down()
+                elif keys[pygame.K_UP]:
+                    tetris.rotate()
+                elif keys[pygame.K_SPACE]:
+                    space_pressed = True  
+            if keys[pygame.K_ESCAPE] or keys[pygame.K_q]:
+                run = False
+                 
 
         # Allows block to fall at constant rate
         counter += 1
-        if counter >= 10000:
+        if counter >= 15000:
             counter = 0
 
         if move:
             if counter % (FPS // (tetris.level*2)) == 0:
                 if not tetris.end:
-                    tetris.move_down()
+                    if space_pressed:
+                        tetris.free_fall()
+                        space_pressed = False
+                    else:
+                        tetris.move_down()
                     
 
 
