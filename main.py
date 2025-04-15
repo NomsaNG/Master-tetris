@@ -120,11 +120,24 @@ class Tetris:
     
     # Remove Row
 
+    # Freeze
+    def freeze(self):
+        for i in range(4):
+            for j in range(4):
+                if (i*4 + j) in self.figure.image():
+                    self.grid[i+self.figure.y][j+self.figure.x] = self.figure.color
+        
+        self.new_shape()
+        if self.collision():
+            self.end = True
+           
+
     # Move Down
     def move_down(self):
         self.figure.y += 1
         if self.collision():
             self.figure.y -= 1
+            self.freeze()
 
 
     # Move Left
@@ -144,6 +157,7 @@ class Tetris:
         while not self.collision():
             self.figure.y += 1
         self.figure.y -= 1
+        self.freeze()
 
     # Rotate
     def rotate(self):
@@ -207,6 +221,16 @@ def main():
 
 
         tetris.make_grid()
+
+        # Keep fallen shapes on screen
+        for x in range(ROWS):
+            for y in range(COLS):
+                if tetris.grid[x][y] > 0:
+                    value = tetris.grid[x][y]
+                    image = ASSETS[value]
+                    SCREEN.blit(image, (CELL * y, CELL * x))
+                    pygame.draw.rect(SCREEN, WHITE, (CELL * y, CELL * x, CELL, CELL), 1)
+
 
         # Show Shape on Game Screen
         if tetris.figure:
