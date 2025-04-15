@@ -47,13 +47,36 @@ font_small = pygame.font.SysFont("verdana", 15)
 
 
 # Shape Class
+class Shape:
+    VERSION ={
+        'I': [[1, 5, 9, 13],[4, 5, 6, 7]],
+        'Z': [[4, 5, 9, 10],[2, 6, 5, 9]],
+        'S': [[6, 7, 9, 10],[1, 5, 6, 10]],
+        'L': [[1, 2, 5, 9],[0, 4, 5, 6], [1, 5, 9, 8], [4, 5, 6, 10]],
+        'J': [[1, 2, 6, 10],[5, 6, 7, 9], [2, 6, 10, 11], [3, 5, 6, 7]],
+        'T': [[1, 4, 5, 6],[1, 4, 5, 9], [4, 5, 6, 10], [1, 5, 6, 10]],
+        'O': [[1, 2, 5, 6]]
+    }
+
+    SHAPES  = ['I', 'Z', 'S', 'L', 'J', 'T', 'O']
 
     # Constructor
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.type = random.choice(self.SHAPES)
+        self.shape = self.VERSION[self.type]
+        self.color = random.randint(1, 4)
+        self.orientation = 0
         
 
     # image ~ Choose correct image 
+    def image(self):
+        return self.shape[self.orientation]
 
     # rotate ~ Rotate image
+    def rotate(self):
+        self.orientation = (self.orientation + 1) % len(self.shape)
 
 
 # Game Class
