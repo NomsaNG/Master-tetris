@@ -99,7 +99,6 @@ class Tetris:
         for j in range(self.cols+1):
             pygame.draw.line(SCREEN, GRID, (CELL*j, 0), (CELL*j, HEIGHT-120))
 
-
     # make shape ~ Create a new shape
     def new_shape(self):
         if not self.next:
@@ -151,14 +150,12 @@ class Tetris:
         if self.collision():
             self.end = True
            
-
     # Move Down
     def move_down(self):
         self.figure.y += 1
         if self.collision():
             self.figure.y -= 1
             self.freeze()
-
 
     # Move Left
     def move_left(self):
@@ -186,11 +183,17 @@ class Tetris:
         if self.collision():
             self.figure.orientation = orientation
             
+    def end_game(self):
+        popup = pygame.Rect(50, 140, WIDTH-100, HEIGHT-350)
+        pygame.draw.rect(SCREEN, BLACK, popup)
+        pygame.draw.rect(SCREEN,LOSE, popup, 2)
 
-
-
-
-
+        game_over = font_small.render("Game Over", True, WHITE)
+        option1 = font_small.render("Press Q to Quit", True, WHITE)
+        option2 = font_small.render("Press R to Restart", True, WHITE)
+        SCREEN.blit(game_over, (popup.centerx - game_over.get_width()//2, popup.y + 20))
+        SCREEN.blit(option1, (popup.centerx - option1.get_width()//2, popup.y + 80))
+        SCREEN.blit(option2, (popup.centerx - option2.get_width()//2, popup.y + 120))
 
 # Main Game Loop
 def main():
@@ -220,6 +223,8 @@ def main():
                     tetris.rotate()
                 elif keys[pygame.K_SPACE]:
                     space_pressed = True  
+            if keys[pygame.K_r]:
+                tetris.__init__(ROWS, COLS)
             if keys[pygame.K_ESCAPE] or keys[pygame.K_q]:
                 run = False
                  
@@ -262,9 +267,31 @@ def main():
                         y = CELL * (tetris.figure.y + i)
                         SCREEN.blit(shape, (x, y))
                         pygame.draw.rect(SCREEN, WHITE, (x, y, CELL, CELL), 1)
-                
-            pygame.display.update()
-            clock.tick(FPS)
+        
+        # Control Panel
+        if tetris.next:
+            for i in range(4):
+                for j in range(4):
+                    if (i *4 + j) in tetris.next.image():
+                        image = ASSETS[tetris.next.color]
+                        x = CELL * (tetris.next.x + j -4)
+                        y = HEIGHT - 100 + CELL * (tetris.next.y + i)
+                        SCREEN.blit(shape, (x, y))
+                        pygame.draw.rect(SCREEN, WHITE, (x, y, CELL, CELL), 1)
+
+        if tetris.end:
+            tetris.end_game()
+       
+        # Score
+        score_text = font.render(str(tetris.score), True, WHITE)
+        level_text = font_small.render("Level: " + str(tetris.level), True, WHITE)
+        SCREEN.blit(score_text, (250 - score_text.get_width()//2, HEIGHT - 110))
+        SCREEN.blit(level_text, (250 - level_text.get_width()//2, HEIGHT - 30))
+
+
+
+        pygame.display.update()
+        clock.tick(FPS)
 
 if __name__ == "__main__":
     main()
